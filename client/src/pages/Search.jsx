@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { SearchX, Search } from 'lucide-react'
 import { api } from '../api'
+import { useStore } from '../store/useStore'
+import { t } from '../utils/i18n'
 import VideoCard, { VideoCardSkeleton } from '../components/VideoCard'
 
 export default function SearchPage() {
   const { query } = useParams()
+  const { language } = useStore()
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -33,9 +36,9 @@ export default function SearchPage() {
         <div className="feed-header">
           <h1 className="feed-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Search size={24} />
-            Поиск
+            {language === 'ru' ? 'Поиск' : 'Search'}
           </h1>
-          <p className="feed-subtitle">Ищем "{decodeURIComponent(query)}"...</p>
+          <p className="feed-subtitle">{language === 'ru' ? 'Ищем' : 'Searching'} "{decodeURIComponent(query)}"...</p>
         </div>
         <VideoCardSkeleton />
         <VideoCardSkeleton />
@@ -46,9 +49,12 @@ export default function SearchPage() {
   return (
     <div className="feed">
       <div className="feed-header">
-        <h1 className="feed-title">Результаты поиска</h1>
+        <h1 className="feed-title">{t('searchResults', language)}</h1>
         <p className="feed-subtitle">
-          По запросу "{decodeURIComponent(query)}" найдено {videos.length} видео
+          {language === 'ru' 
+            ? `По запросу "${decodeURIComponent(query)}" найдено ${videos.length} видео`
+            : `Found ${videos.length} videos for "${decodeURIComponent(query)}"`
+          }
         </p>
       </div>
 
@@ -57,8 +63,8 @@ export default function SearchPage() {
           <div className="empty-icon">
             <SearchX size={32} />
           </div>
-          <h3 className="empty-title">Ничего не найдено</h3>
-          <p className="empty-text">Попробуй другой запрос</p>
+          <h3 className="empty-title">{t('noResults', language)}</h3>
+          <p className="empty-text">{t('tryDifferentQuery', language)}</p>
         </div>
       ) : (
         videos.map((video) => (

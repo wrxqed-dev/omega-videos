@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Heart, MessageCircle, UserPlus, Video, Trash2, Check, Bell } from 'lucide-react'
+import { Heart, MessageCircle, UserPlus, Video, Trash2, Bell } from 'lucide-react'
 import { api } from '../api'
 import { useStore } from '../store/useStore'
 import { formatTimeAgo } from '../utils/time'
+import { t } from '../utils/i18n'
 
 export default function Notifications() {
-  const { user } = useStore()
+  const { user, language } = useStore()
   const navigate = useNavigate()
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
@@ -65,11 +66,11 @@ export default function Notifications() {
 
   const getMessage = (n) => {
     switch (n.type) {
-      case 'like': return <><strong>@{n.from_username}</strong> понравилось ваше видео</>
-      case 'comment': return <><strong>@{n.from_username}</strong> прокомментировал ваше видео</>
-      case 'follow': return <><strong>@{n.from_username}</strong> подписался на вас</>
-      case 'new_video': return <><strong>@{n.from_username}</strong> опубликовал новое видео</>
-      default: return <><strong>@{n.from_username}</strong> взаимодействовал с вами</>
+      case 'like': return <><strong>@{n.from_username}</strong> {t('likedYourVideo', language)}</>
+      case 'comment': return <><strong>@{n.from_username}</strong> {t('commentedOnVideo', language)}</>
+      case 'follow': return <><strong>@{n.from_username}</strong> {t('followedYou', language)}</>
+      case 'new_video': return <><strong>@{n.from_username}</strong> {t('postedNewVideo', language)}</>
+      default: return <><strong>@{n.from_username}</strong></>
     }
   }
 
@@ -88,11 +89,11 @@ export default function Notifications() {
   return (
     <div className="notifications-page">
       <div className="notifications-header">
-        <h1>Уведомления</h1>
+        <h1>{t('notificationsTitle', language)}</h1>
         {notifications.length > 0 && (
           <button className="btn btn-ghost" onClick={handleClearAll}>
             <Trash2 size={18} />
-            Очистить все
+            {t('clearAll', language)}
           </button>
         )}
       </div>
@@ -100,8 +101,8 @@ export default function Notifications() {
       {notifications.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon"><Bell size={32} /></div>
-          <h3 className="empty-title">Нет уведомлений</h3>
-          <p className="empty-text">Здесь появятся лайки, комментарии и подписки</p>
+          <h3 className="empty-title">{t('noNotifications', language)}</h3>
+          <p className="empty-text">{t('notificationsWillAppear', language)}</p>
         </div>
       ) : (
         <div className="notifications-list">
@@ -117,7 +118,7 @@ export default function Notifications() {
                 {n.video_title && (
                   <p className="notification-video">"{n.video_title}"</p>
                 )}
-                <span className="notification-time">{formatTimeAgo(n.created_at)}</span>
+                <span className="notification-time">{formatTimeAgo(n.created_at, language)}</span>
               </div>
 
               {n.video_filename && (

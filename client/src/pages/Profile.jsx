@@ -4,12 +4,13 @@ import { Settings, UserPlus, UserMinus, Video, Calendar } from 'lucide-react'
 import { api } from '../api'
 import { useStore } from '../store/useStore'
 import { formatTimeAgo } from '../utils/time'
+import { t } from '../utils/i18n'
 import VideoCard, { VideoCardSkeleton } from '../components/VideoCard'
 import EditProfileModal from '../components/EditProfileModal'
 
 export default function Profile() {
   const { username } = useParams()
-  const { user: currentUser, setModal } = useStore()
+  const { user: currentUser, setModal, language } = useStore()
   const [profile, setProfile] = useState(null)
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
@@ -88,8 +89,8 @@ export default function Profile() {
     return (
       <div className="profile">
         <div className="empty-state">
-          <h3 className="empty-title">Пользователь не найден</h3>
-          <p className="empty-text">Возможно, аккаунт был удален</p>
+          <h3 className="empty-title">{language === 'ru' ? 'Пользователь не найден' : 'User not found'}</h3>
+          <p className="empty-text">{language === 'ru' ? 'Возможно, аккаунт был удален' : 'The account may have been deleted'}</p>
         </div>
       </div>
     )
@@ -105,7 +106,7 @@ export default function Profile() {
         </div>
         <div className="profile-info">
           <h1 className="profile-username">@{profile.username}</h1>
-          <p className="profile-bio">{profile.bio || 'Пока нет описания'}</p>
+          <p className="profile-bio">{profile.bio || (language === 'ru' ? 'Пока нет описания' : 'No bio yet')}</p>
           
           <div style={{ 
             display: 'flex', 
@@ -116,21 +117,21 @@ export default function Profile() {
             marginBottom: 16 
           }}>
             <Calendar size={14} />
-            <span>На платформе {formatTimeAgo(profile.created_at)}</span>
+            <span>{language === 'ru' ? 'На платформе' : 'Joined'} {formatTimeAgo(profile.created_at, language)}</span>
           </div>
           
           <div className="profile-stats">
             <div className="profile-stat">
               <div className="profile-stat-value">{profile.videos}</div>
-              <div className="profile-stat-label">видео</div>
+              <div className="profile-stat-label">{t('videosCount', language)}</div>
             </div>
             <div className="profile-stat">
               <div className="profile-stat-value">{profile.followers}</div>
-              <div className="profile-stat-label">подписчиков</div>
+              <div className="profile-stat-label">{t('followers', language)}</div>
             </div>
             <div className="profile-stat">
               <div className="profile-stat-value">{profile.following}</div>
-              <div className="profile-stat-label">подписок</div>
+              <div className="profile-stat-label">{t('following', language)}</div>
             </div>
           </div>
           
@@ -138,7 +139,7 @@ export default function Profile() {
             {isOwner ? (
               <button className="btn btn-secondary" onClick={() => setShowEdit(true)}>
                 <Settings size={18} />
-                Редактировать
+                {t('editProfile', language)}
               </button>
             ) : (
               <button
@@ -152,12 +153,12 @@ export default function Profile() {
                 ) : profile.isFollowing ? (
                   <>
                     <UserMinus size={18} />
-                    Отписаться
+                    {t('unfollow', language)}
                   </>
                 ) : (
                   <>
                     <UserPlus size={18} />
-                    Подписаться
+                    {t('follow', language)}
                   </>
                 )}
               </button>
@@ -168,7 +169,7 @@ export default function Profile() {
 
       <h2 style={{ marginBottom: 20, fontSize: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
         <Video size={20} />
-        Видео
+        {t('videosCount', language)}
       </h2>
 
       {videos.length === 0 ? (
@@ -176,8 +177,8 @@ export default function Profile() {
           <div className="empty-icon">
             <Video size={32} />
           </div>
-          <h3 className="empty-title">Пока нет видео</h3>
-          {isOwner && <p className="empty-text">Загрузи своё первое видео!</p>}
+          <h3 className="empty-title">{t('noVideosYet', language)}</h3>
+          {isOwner && <p className="empty-text">{language === 'ru' ? 'Загрузи своё первое видео!' : 'Upload your first video!'}</p>}
         </div>
       ) : (
         <div style={{ maxWidth: 480, margin: '0 auto' }}>

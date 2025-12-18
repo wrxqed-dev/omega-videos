@@ -1,101 +1,107 @@
-// Правильное форматирование времени на русском
-export function formatTimeAgo(dateStr) {
+const timeStrings = {
+  en: {
+    justNow: 'just now',
+    minute: ['minute', 'minutes'],
+    hour: ['hour', 'hours'],
+    day: ['day', 'days'],
+    week: ['week', 'weeks'],
+    month: ['month', 'months'],
+    year: ['year', 'years'],
+    ago: 'ago',
+    min: 'min',
+    h: 'h',
+    d: 'd',
+    w: 'w'
+  },
+  ru: {
+    justNow: 'только что',
+    minute: ['минуту', 'минуты', 'минут'],
+    hour: ['час', 'часа', 'часов'],
+    day: ['день', 'дня', 'дней'],
+    week: ['неделю', 'недели', 'недель'],
+    month: ['месяц', 'месяца', 'месяцев'],
+    year: ['год', 'года', 'лет'],
+    ago: 'назад',
+    min: 'мин',
+    h: 'ч',
+    d: 'д',
+    w: 'нед'
+  }
+}
+
+function pluralize(n, forms, lang) {
+  if (lang === 'en') {
+    return n === 1 ? forms[0] : forms[1]
+  }
+  // Russian pluralization
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod100 >= 11 && mod100 <= 19) return forms[2]
+  if (mod10 === 1) return forms[0]
+  if (mod10 >= 2 && mod10 <= 4) return forms[1]
+  return forms[2]
+}
+
+export function formatTimeAgo(dateStr, lang = 'en') {
   if (!dateStr) return ''
   
-  // Parse the date - SQLite returns local time now
+  const strings = timeStrings[lang] || timeStrings.en
   const date = new Date(dateStr.replace(' ', 'T'))
   const now = new Date()
   const diff = Math.floor((now - date) / 1000)
 
-  // Future date check (shouldn't happen but just in case)
-  if (diff < 0) return 'только что'
+  if (diff < 0 || diff < 60) return strings.justNow
 
-  // Меньше минуты
-  if (diff < 60) {
-    return 'только что'
-  }
-
-  // Минуты
   if (diff < 3600) {
     const mins = Math.floor(diff / 60)
-    return `${mins} ${pluralize(mins, 'минуту', 'минуты', 'минут')} назад`
+    return `${mins} ${pluralize(mins, strings.minute, lang)} ${strings.ago}`
   }
 
-  // Часы
   if (diff < 86400) {
     const hours = Math.floor(diff / 3600)
-    return `${hours} ${pluralize(hours, 'час', 'часа', 'часов')} назад`
+    return `${hours} ${pluralize(hours, strings.hour, lang)} ${strings.ago}`
   }
 
-  // Дни
   if (diff < 604800) {
     const days = Math.floor(diff / 86400)
-    return `${days} ${pluralize(days, 'день', 'дня', 'дней')} назад`
+    return `${days} ${pluralize(days, strings.day, lang)} ${strings.ago}`
   }
 
-  // Недели
   if (diff < 2592000) {
     const weeks = Math.floor(diff / 604800)
-    return `${weeks} ${pluralize(weeks, 'неделю', 'недели', 'недель')} назад`
+    return `${weeks} ${pluralize(weeks, strings.week, lang)} ${strings.ago}`
   }
 
-  // Месяцы
   if (diff < 31536000) {
     const months = Math.floor(diff / 2592000)
-    return `${months} ${pluralize(months, 'месяц', 'месяца', 'месяцев')} назад`
+    return `${months} ${pluralize(months, strings.month, lang)} ${strings.ago}`
   }
 
-  // Годы
   const years = Math.floor(diff / 31536000)
-  return `${years} ${pluralize(years, 'год', 'года', 'лет')} назад`
+  return `${years} ${pluralize(years, strings.year, lang)} ${strings.ago}`
 }
 
-// Склонение слов
-function pluralize(n, one, few, many) {
-  const mod10 = n % 10
-  const mod100 = n % 100
-
-  if (mod100 >= 11 && mod100 <= 19) {
-    return many
-  }
-
-  if (mod10 === 1) {
-    return one
-  }
-
-  if (mod10 >= 2 && mod10 <= 4) {
-    return few
-  }
-
-  return many
-}
-
-// Форматирование чисел
 export function formatCount(n) {
   if (!n) return '0'
-  if (n >= 1000000) {
-    return (n / 1000000).toFixed(1).replace('.0', '') + 'M'
-  }
-  if (n >= 1000) {
-    return (n / 1000).toFixed(1).replace('.0', '') + 'K'
-  }
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M'
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K'
   return n.toString()
 }
 
-// Форматирование даты для комментариев (более короткое)
-export function formatCommentTime(dateStr) {
+export function formatCommentTime(dateStr, lang = 'en') {
   if (!dateStr) return ''
   
+  const strings = timeStrings[lang] || timeStrings.en
   const date = new Date(dateStr.replace(' ', 'T'))
   const now = new Date()
   const diff = Math.floor((now - date) / 1000)
 
-  if (diff < 0) return 'сейчас'
-  if (diff < 60) return 'сейчас'
-  if (diff < 3600) return `${Math.floor(diff / 60)} мин`
-  if (diff < 86400) return `${Math.floor(diff / 3600)} ч`
-  if (diff < 604800) return `${Math.floor(diff / 86400)} д`
-  if (diff < 2592000) return `${Math.floor(diff / 604800)} нед`
+  if (diff < 0 || diff < 60) return strings.justNow
+  if (diff < 3600) return `${Math.floor(diff / 60)} ${strings.min}`
+  if (diff < 86400) return `${Math.floor(diff / 3600)} ${strings.h}`
+  if (diff < 604800) return `${Math.floor(diff / 86400)} ${strings.d}`
+  if (diff < 2592000) return `${Math.floor(diff / 604800)} ${strings.w}`
   
-  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
+  const locale = lang === 'ru' ? 'ru-RU' : 'en-US'
+  return date.toLocaleDateString(locale, { day: 'numeric', month: 'short' })
 }

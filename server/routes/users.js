@@ -61,6 +61,18 @@ router.get('/:username', optionalAuth, (req, res) => {
   });
 });
 
+// Update settings (language, etc)
+router.put('/settings', authMiddleware, (req, res) => {
+  const { language } = req.body;
+  
+  if (language && ['en', 'ru'].includes(language)) {
+    db.prepare('UPDATE users SET language = ? WHERE id = ?').run(language, req.userId);
+  }
+  
+  const user = db.prepare('SELECT id, username, email, avatar, bio, language FROM users WHERE id = ?').get(req.userId);
+  res.json(user);
+});
+
 // Update profile
 router.put('/profile', authMiddleware, upload.single('avatar'), (req, res) => {
   const { bio } = req.body;

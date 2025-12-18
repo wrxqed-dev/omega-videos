@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
 
     res.json({
       token,
-      user: { id: result.lastInsertRowid, username, email, avatar: null, bio: '' }
+      user: { id: result.lastInsertRowid, username, email, avatar: null, bio: '', language: 'en' }
     });
   } catch (error) {
     res.status(500).json({ error: 'Ошибка сервера' });
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar, bio: user.bio }
+      user: { id: user.id, username: user.username, email: user.email, avatar: user.avatar, bio: user.bio, language: user.language || 'en' }
     });
   } catch (error) {
     res.status(500).json({ error: 'Ошибка сервера' });
@@ -62,11 +62,11 @@ router.post('/login', async (req, res) => {
 
 // Get current user
 router.get('/me', require('../middleware/auth').authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT id, username, email, avatar, bio FROM users WHERE id = ?').get(req.userId);
+  const user = db.prepare('SELECT id, username, email, avatar, bio, language FROM users WHERE id = ?').get(req.userId);
   if (!user) {
     return res.status(404).json({ error: 'Пользователь не найден' });
   }
-  res.json(user);
+  res.json({ ...user, language: user.language || 'en' });
 });
 
 module.exports = router;

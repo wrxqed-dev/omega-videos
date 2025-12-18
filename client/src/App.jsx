@@ -7,6 +7,7 @@ import Trending from './pages/Trending'
 import Profile from './pages/Profile'
 import Search from './pages/Search'
 import Notifications from './pages/Notifications'
+import Settings from './pages/Settings'
 import AuthModal from './components/AuthModal'
 import UploadModal from './components/UploadModal'
 
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/" element={<Feed />} />
           <Route path="/trending" element={<Trending />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/user/:username" element={<Profile />} />
           <Route path="/search/:query" element={<Search />} />
         </Routes>

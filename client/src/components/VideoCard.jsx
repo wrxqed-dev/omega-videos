@@ -7,7 +7,7 @@ import { formatTimeAgo, formatCount } from '../utils/time'
 import CommentsModal from './CommentsModal'
 
 export default function VideoCard({ video }) {
-  const { user, setModal } = useStore()
+  const { user, setModal, language } = useStore()
   const [liked, setLiked] = useState(!!video.isLiked)
   const [likes, setLikes] = useState(video.likes || 0)
   const [views, setViews] = useState(video.views || 0)
@@ -83,7 +83,7 @@ export default function VideoCard({ video }) {
             <img src={getAvatar(video.username, video.avatar)} alt="" className="avatar" />
             <div className="video-user-info">
               <h4>@{video.username}</h4>
-              <span>{formatTimeAgo(video.created_at)}</span>
+              <span>{formatTimeAgo(video.created_at, language)}</span>
             </div>
           </Link>
         </div>

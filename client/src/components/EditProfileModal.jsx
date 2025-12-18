@@ -2,9 +2,10 @@ import { useState, useRef } from 'react'
 import { X, Camera, Check } from 'lucide-react'
 import { api } from '../api'
 import { useStore } from '../store/useStore'
+import { t } from '../utils/i18n'
 
 export default function EditProfileModal({ onClose, onUpdate }) {
-  const { user, updateUser } = useStore()
+  const { user, updateUser, language } = useStore()
   const [preview, setPreview] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -71,7 +72,7 @@ export default function EditProfileModal({ onClose, onUpdate }) {
           }}>
             <Check size={32} />
           </div>
-          <h3>Профиль обновлен!</h3>
+          <h3>{language === 'ru' ? 'Профиль обновлен!' : 'Profile updated!'}</h3>
         </div>
       </div>
     )
@@ -81,7 +82,7 @@ export default function EditProfileModal({ onClose, onUpdate }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2 className="modal-title">Редактировать профиль</h2>
+          <h2 className="modal-title">{t('editProfileTitle', language)}</h2>
           <button className="modal-close" onClick={onClose}>
             <X size={20} />
           </button>
@@ -131,7 +132,7 @@ export default function EditProfileModal({ onClose, onUpdate }) {
               </div>
             </div>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 12 }}>
-              Нажми, чтобы изменить фото
+              {language === 'ru' ? 'Нажми, чтобы изменить фото' : 'Click to change photo'}
             </p>
             <input
               ref={fileRef}
@@ -143,7 +144,7 @@ export default function EditProfileModal({ onClose, onUpdate }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Имя пользователя</label>
+            <label className="form-label">{t('username', language)}</label>
             <input
               type="text"
               className="form-input"
@@ -152,22 +153,22 @@ export default function EditProfileModal({ onClose, onUpdate }) {
               style={{ opacity: 0.5, cursor: 'not-allowed' }}
             />
             <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>
-              Имя пользователя нельзя изменить
+              {language === 'ru' ? 'Имя пользователя нельзя изменить' : 'Username cannot be changed'}
             </p>
           </div>
 
           <div className="form-group">
-            <label className="form-label">О себе</label>
+            <label className="form-label">{t('bio', language)}</label>
             <textarea
               name="bio"
               className="form-input"
-              placeholder="Расскажи о себе..."
+              placeholder={t('bioPlaceholder', language)}
               defaultValue={user?.bio || ''}
               rows={4}
               maxLength={200}
             />
             <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6, textAlign: 'right' }}>
-              Максимум 200 символов
+              {language === 'ru' ? 'Максимум 200 символов' : 'Max 200 characters'}
             </p>
           </div>
 
@@ -181,7 +182,7 @@ export default function EditProfileModal({ onClose, onUpdate }) {
               style={{ flex: 1 }}
               disabled={loading}
             >
-              Отмена
+              {language === 'ru' ? 'Отмена' : 'Cancel'}
             </button>
             <button 
               type="submit" 
@@ -189,7 +190,7 @@ export default function EditProfileModal({ onClose, onUpdate }) {
               disabled={loading}
               style={{ flex: 1 }}
             >
-              {loading ? 'Сохранение...' : 'Сохранить'}
+              {loading ? (language === 'ru' ? 'Сохранение...' : 'Saving...') : t('save', language)}
             </button>
           </div>
         </form>

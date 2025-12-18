@@ -58,6 +58,9 @@ export const api = {
   likeComment: (id) => request(`/comments/${id}/like`, { method: 'POST' }),
   deleteComment: (id) => request(`/comments/${id}`, { method: 'DELETE' }),
 
+  // Settings
+  updateSettings: (data) => request('/users/settings', { method: 'PUT', body: JSON.stringify(data) }),
+
   // Notifications
   getNotifications: () => request('/notifications'),
   getUnreadCount: () => request('/notifications/unread'),

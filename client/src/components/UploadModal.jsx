@@ -2,9 +2,10 @@ import { useState, useRef } from 'react'
 import { X, Upload, Film, CheckCircle } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { api } from '../api'
+import { t } from '../utils/i18n'
 
 export default function UploadModal() {
-  const { setModal } = useStore()
+  const { setModal, language } = useStore()
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [error, setError] = useState('')
@@ -122,7 +123,7 @@ export default function UploadModal() {
     <div className="modal-overlay" onClick={() => !loading && setModal(null)}>
       <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 500 }}>
         <div className="modal-header">
-          <h2 className="modal-title">Загрузить видео</h2>
+          <h2 className="modal-title">{t('uploadVideo', language)}</h2>
           <button className="modal-close" onClick={() => !loading && setModal(null)} disabled={loading}>
             <X size={20} />
           </button>
@@ -138,10 +139,10 @@ export default function UploadModal() {
             >
               <Upload className="file-upload-icon" size={56} />
               <p className="file-upload-text">
-                <span>Нажмите для выбора</span> или перетащите видео
+                {t('dragOrClick', language)}
               </p>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 12 }}>
-                MP4, WebM или MOV • до 100MB • до 60 секунд
+                {t('videoFormats', language)}
               </p>
               <input
                 ref={fileRef}
@@ -187,12 +188,12 @@ export default function UploadModal() {
           )}
 
           <div className="form-group">
-            <label className="form-label">Название *</label>
+            <label className="form-label">{t('title', language)} *</label>
             <input
               type="text"
               name="title"
               className="form-input"
-              placeholder="Дай название своему видео"
+              placeholder={t('titlePlaceholder', language)}
               required
               maxLength={100}
               disabled={loading}
@@ -200,11 +201,11 @@ export default function UploadModal() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Описание</label>
+            <label className="form-label">{t('description', language)}</label>
             <textarea
               name="description"
               className="form-input"
-              placeholder="Расскажи о чем это видео..."
+              placeholder={t('descriptionPlaceholder', language)}
               rows={3}
               maxLength={500}
               disabled={loading}
@@ -247,7 +248,7 @@ export default function UploadModal() {
             className="btn btn-primary form-submit"
             disabled={loading || !file}
           >
-            {loading ? 'Загружаем...' : 'Опубликовать'}
+            {loading ? t('uploading', language) : t('publish', language)}
           </button>
         </form>
       </div>

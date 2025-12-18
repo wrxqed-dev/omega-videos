@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Flame, TrendingUp } from 'lucide-react'
 import { api } from '../api'
+import { useStore } from '../store/useStore'
+import { t } from '../utils/i18n'
 import VideoCard, { VideoCardSkeleton } from '../components/VideoCard'
 
 export default function Trending() {
+  const { language } = useStore()
   const [videos, setVideos] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -28,9 +31,9 @@ export default function Trending() {
         <div className="feed-header">
           <h1 className="feed-title">
             <Flame size={28} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 8, color: 'var(--accent)' }} />
-            Тренды
+            {t('trendingNow', language)}
           </h1>
-          <p className="feed-subtitle">Самые популярные видео</p>
+          <p className="feed-subtitle">{t('hotContent', language)}</p>
         </div>
         <VideoCardSkeleton />
         <VideoCardSkeleton />
@@ -43,9 +46,9 @@ export default function Trending() {
       <div className="feed-header">
         <h1 className="feed-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Flame size={28} style={{ color: 'var(--accent)' }} />
-          Тренды
+          {t('trendingNow', language)}
         </h1>
-        <p className="feed-subtitle">Самые популярные видео</p>
+        <p className="feed-subtitle">{t('hotContent', language)}</p>
       </div>
 
       {videos.length === 0 ? (
@@ -53,8 +56,8 @@ export default function Trending() {
           <div className="empty-icon">
             <TrendingUp size={32} />
           </div>
-          <h3 className="empty-title">Пока нет трендов</h3>
-          <p className="empty-text">Загрузи видео и попади в тренды!</p>
+          <h3 className="empty-title">{t('nothingTrending', language)}</h3>
+          <p className="empty-text">{t('checkBackLater', language)}</p>
         </div>
       ) : (
         videos.map((video, index) => (

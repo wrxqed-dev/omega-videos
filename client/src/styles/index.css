@@ -1233,3 +1233,88 @@ textarea.form-input { resize: vertical; min-height: 100px; }
   background: var(--bg-elevated);
   color: var(--accent);
 }
+
+
+/* Settings Page */
+.settings-page {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.settings-page h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.settings-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.settings-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+.language-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.language-option:hover {
+  border-color: var(--border-light);
+  background: var(--bg-elevated);
+}
+
+.language-option.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.lang-flag {
+  font-size: 24px;
+}
+
+.check-icon {
+  margin-left: auto;
+  color: var(--accent);
+}
+
+.save-settings-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.save-settings-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -4,9 +4,10 @@ import { X, Send, Heart, MessageCircle, Trash2, ChevronDown, ChevronUp } from 'l
 import { api } from '../api'
 import { useStore } from '../store/useStore'
 import { formatCommentTime } from '../utils/time'
+import { t } from '../utils/i18n'
 
 export default function CommentsModal({ videoId, onClose }) {
-  const { user, setModal } = useStore()
+  const { user, setModal, language } = useStore()
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
   const [text, setText] = useState('')
@@ -145,7 +146,7 @@ export default function CommentsModal({ videoId, onClose }) {
           <Link to={`/user/${comment.username}`} className="comment-username">
             @{comment.username}
           </Link>
-          <span className="comment-time">{formatCommentTime(comment.created_at)}</span>
+          <span className="comment-time">{formatCommentTime(comment.created_at, language)}</span>
         </div>
         <p className="comment-text">{comment.text}</p>
         <div className="comment-actions">
@@ -165,7 +166,7 @@ export default function CommentsModal({ videoId, onClose }) {
                 inputRef.current?.focus()
               }}
             >
-              <span>Ответить</span>
+              <span>{t('reply', language)}</span>
             </button>
           )}
           {user?.id === comment.user_id && (
@@ -187,7 +188,7 @@ export default function CommentsModal({ videoId, onClose }) {
             style={{ marginTop: 8, color: 'var(--accent)' }}
           >
             {comment.showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            <span>{comment.showReplies ? 'Скрыть' : `Показать ${comment.replies} ответов`}</span>
+            <span>{comment.showReplies ? (language === 'ru' ? 'Скрыть' : 'Hide') : (language === 'ru' ? `Показать ${comment.replies} ответов` : `Show ${comment.replies} replies`)}</span>
           </button>
         )}
         {comment.showReplies && comment.repliesList?.map(reply => renderComment(reply, true))}
@@ -200,8 +201,8 @@ export default function CommentsModal({ videoId, onClose }) {
       <div className="modal comments-modal" onClick={(e) => e.stopPropagation()}>
         <div className="comments-header">
           <div>
-            <h2 className="modal-title">Комментарии</h2>
-            <span className="comments-count">{comments.length} комментариев</span>
+            <h2 className="modal-title">{t('commentsTitle', language)}</h2>
+            <span className="comments-count">{comments.length} {t('comments', language)}</span>
           </div>
           <button className="modal-close" onClick={onClose}>
             <X size={20} />
@@ -216,8 +217,8 @@ export default function CommentsModal({ videoId, onClose }) {
               <div className="empty-icon" style={{ width: 60, height: 60 }}>
                 <MessageCircle size={24} />
               </div>
-              <h3 className="empty-title" style={{ fontSize: 16 }}>Пока нет комментариев</h3>
-              <p className="empty-text" style={{ fontSize: 14 }}>Будь первым!</p>
+              <h3 className="empty-title" style={{ fontSize: 16 }}>{t('noComments', language)}</h3>
+              <p className="empty-text" style={{ fontSize: 14 }}>{t('beFirstToComment', language)}</p>
             </div>
           ) : (
             comments.map(comment => renderComment(comment))
@@ -261,7 +262,7 @@ export default function CommentsModal({ videoId, onClose }) {
                 ref={inputRef}
                 type="text"
                 className="comment-input"
-                placeholder={replyTo ? `Ответить @${replyTo.username}...` : "Написать комментарий..."}
+                placeholder={replyTo ? `${t('reply', language)} @${replyTo.username}...` : t('addComment', language)}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 maxLength={500}
@@ -283,13 +284,13 @@ export default function CommentsModal({ videoId, onClose }) {
             marginTop: '16px'
           }}>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 12, fontSize: 14 }}>
-              Войдите, чтобы оставить комментарий
+              {language === 'ru' ? 'Войдите, чтобы оставить комментарий' : 'Log in to leave a comment'}
             </p>
             <button 
               className="btn btn-primary" 
               onClick={() => { onClose(); setModal('auth') }}
             >
-              Войти
+              {t('loginBtn', language)}
             </button>
           </div>
         )}

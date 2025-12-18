@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { t } from '../utils/i18n'
 
 export default function AuthModal() {
-  const { setModal, authTab, setAuthTab, login, register } = useStore()
+  const { setModal, authTab, setAuthTab, login, register, language } = useStore()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -38,7 +39,7 @@ export default function AuthModal() {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2 className="modal-title">
-            {authTab === 'login' ? 'С возвращением!' : 'Создать аккаунт'}
+            {authTab === 'login' ? t('welcomeBack', language) : t('createAccount', language)}
           </h2>
           <button className="modal-close" onClick={() => setModal(null)}>
             <X size={20} />
@@ -50,20 +51,20 @@ export default function AuthModal() {
             className={`auth-tab ${authTab === 'login' ? 'active' : ''}`}
             onClick={() => { setAuthTab('login'); setError('') }}
           >
-            Вход
+            {t('loginBtn', language)}
           </button>
           <button
             className={`auth-tab ${authTab === 'register' ? 'active' : ''}`}
             onClick={() => { setAuthTab('register'); setError('') }}
           >
-            Регистрация
+            {t('registerBtn', language)}
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
           {authTab === 'register' && (
             <div className="form-group">
-              <label className="form-label">Имя пользователя</label>
+              <label className="form-label">{t('username', language)}</label>
               <div style={{ position: 'relative' }}>
                 <User 
                   size={18} 
@@ -92,7 +93,7 @@ export default function AuthModal() {
           )}
 
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('email', language)}</label>
             <div style={{ position: 'relative' }}>
               <Mail 
                 size={18} 
@@ -116,7 +117,7 @@ export default function AuthModal() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Пароль</label>
+            <label className="form-label">{t('password', language)}</label>
             <div style={{ position: 'relative' }}>
               <Lock 
                 size={18} 
@@ -163,24 +164,10 @@ export default function AuthModal() {
             {loading ? (
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
-                Загрузка...
               </span>
-            ) : authTab === 'login' ? 'Войти' : 'Создать аккаунт'}
+            ) : authTab === 'login' ? t('loginBtn', language) : t('registerBtn', language)}
           </button>
         </form>
-
-        <p style={{ 
-          textAlign: 'center', 
-          marginTop: 20, 
-          fontSize: 13, 
-          color: 'var(--text-muted)' 
-        }}>
-          {authTab === 'login' ? (
-            <>Нет аккаунта? <button onClick={() => setAuthTab('register')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600 }}>Зарегистрируйся</button></>
-          ) : (
-            <>Уже есть аккаунт? <button onClick={() => setAuthTab('login')} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 600 }}>Войди</button></>
-          )}
-        </p>
       </div>
     </div>
   )

@@ -15,6 +15,7 @@ db.exec(`
     password TEXT NOT NULL,
     avatar TEXT DEFAULT NULL,
     bio TEXT DEFAULT '',
+    language TEXT DEFAULT 'en',
     created_at TEXT DEFAULT (datetime('now', 'localtime'))
   );
 
