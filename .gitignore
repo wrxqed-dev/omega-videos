@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploads (user content)
+uploads/videos/*
+uploads/avatars/*
+!uploads/videos/.gitkeep
+!uploads/avatars/.gitkeep
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build output
+client/dist/
+dist/
+build/
+
+# Cache
+.cache/
+.vite/
+.parcel-cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.tmp
+*.temp
+.eslintcache
