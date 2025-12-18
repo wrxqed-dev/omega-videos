@@ -31,6 +31,7 @@ export const api = {
   getVideo: (id) => request(`/videos/${id}`),
   uploadVideo: (formData) => request('/videos', { method: 'POST', body: formData }),
   likeVideo: (id) => request(`/videos/${id}/like`, { method: 'POST' }),
+  viewVideo: (id) => request(`/videos/${id}/view`, { method: 'POST' }),
   bookmarkVideo: (id) => request(`/videos/${id}/bookmark`, { method: 'POST' }),
   deleteVideo: (id) => request(`/videos/${id}`, { method: 'DELETE' }),
   searchVideos: (q) => request(`/videos/search/${encodeURIComponent(q)}`),

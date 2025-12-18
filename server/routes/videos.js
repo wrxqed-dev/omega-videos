@@ -81,6 +81,42 @@ router.get('/feed', optionalAuth, (req, res) => {
   res.json(videos);
 });
 
+// Increment view count (1 user = 1 view)
+router.post('/:id/view', optionalAuth, (req, res) => {
+  const videoId = req.params.id;
+  const video = db.prepare('SELECT id, views FROM videos WHERE id = ?').get(videoId);
+  if (!video) {
+    return res.status(404).json({ error: 'Видео не найдено' });
+  }
+
+  const userId = req.userId || null;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+
+  // Check if already viewed
+  let alreadyViewed = false;
+  if (userId) {
+    alreadyViewed = db.prepare('SELECT 1 FROM video_views WHERE video_id = ? AND user_id = ?').get(videoId, userId);
+  } else {
+    alreadyViewed = db.prepare('SELECT 1 FROM video_views WHERE video_id = ? AND ip_address = ?').get(videoId, ip);
+  }
+
+  if (!alreadyViewed) {
+    try {
+      if (userId) {
+        db.prepare('INSERT INTO video_views (video_id, user_id) VALUES (?, ?)').run(videoId, userId);
+      } else {
+        db.prepare('INSERT INTO video_views (video_id, ip_address) VALUES (?, ?)').run(videoId, ip);
+      }
+      db.prepare('UPDATE videos SET views = views + 1 WHERE id = ?').run(videoId);
+    } catch (err) {
+      // Ignore duplicate errors
+    }
+  }
+
+  const updated = db.prepare('SELECT views FROM videos WHERE id = ?').get(videoId);
+  res.json({ views: updated.views, counted: !alreadyViewed });
+});
+
 // Get trending videos
 router.get('/trending', optionalAuth, (req, res) => {
   const videos = db.prepare(`
@@ -164,9 +200,6 @@ router.get('/:id', optionalAuth, (req, res) => {
   if (!video) {
     return res.status(404).json({ error: 'Видео не найдено' });
   }
-
-  // Increment views
-  db.prepare('UPDATE videos SET views = views + 1 WHERE id = ?').run(req.params.id);
 
   res.json(video);
 });

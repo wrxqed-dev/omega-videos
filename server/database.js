@@ -94,6 +94,18 @@ db.exec(`
     FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE
   );
 
+  CREATE TABLE IF NOT EXISTS video_views (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    video_id INTEGER NOT NULL,
+    user_id INTEGER,
+    ip_address TEXT,
+    created_at TEXT DEFAULT (datetime('now', 'localtime')),
+    UNIQUE(video_id, user_id),
+    UNIQUE(video_id, ip_address),
+    FOREIGN KEY (video_id) REFERENCES videos(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+
   -- Indexes for performance
   CREATE INDEX IF NOT EXISTS idx_videos_user ON videos(user_id);
   CREATE INDEX IF NOT EXISTS idx_videos_created ON videos(created_at DESC);

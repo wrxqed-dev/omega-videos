@@ -1,13 +1,39 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Flame, Search, Plus, LogOut } from 'lucide-react'
+import { Home, Flame, Search, Plus, LogOut, Bell } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { api } from '../api'
 
 export default function Navbar() {
   const { user, logout, setModal } = useStore()
   const [query, setQuery] = useState('')
+  const [unreadCount, setUnreadCount] = useState(0)
   const location = useLocation()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (user) {
+      loadUnreadCount()
+      const interval = setInterval(loadUnreadCount, 30000) // Check every 30s
+      return () => clearInterval(interval)
+    }
+  }, [user])
+
+  useEffect(() => {
+    // Reset count when visiting notifications page
+    if (location.pathname === '/notifications') {
+      setUnreadCount(0)
+    }
+  }, [location.pathname])
+
+  const loadUnreadCount = async () => {
+    try {
+      const data = await api.getUnreadCount()
+      setUnreadCount(data.count)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -58,6 +84,10 @@ export default function Navbar() {
               <Plus size={18} />
               Загрузить
             </button>
+            <Link to="/notifications" className="btn btn-ghost btn-icon notification-btn" title="Уведомления">
+              <Bell size={20} />
+              {unreadCount > 0 && <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>}
+            </Link>
             <Link to={`/user/${user.username}`} className="profile-btn">
               <img src={getAvatar(user)} alt="" className="avatar" />
               <span>{user.username}</span>

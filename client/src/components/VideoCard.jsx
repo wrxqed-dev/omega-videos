@@ -10,9 +10,11 @@ export default function VideoCard({ video }) {
   const { user, setModal } = useStore()
   const [liked, setLiked] = useState(!!video.isLiked)
   const [likes, setLikes] = useState(video.likes || 0)
+  const [views, setViews] = useState(video.views || 0)
   const [playing, setPlaying] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [likeAnimating, setLikeAnimating] = useState(false)
+  const [viewCounted, setViewCounted] = useState(false)
   const videoRef = useRef(null)
 
   const getAvatar = (username, avatar) => {
@@ -53,6 +55,20 @@ export default function VideoCard({ video }) {
     }
   }
 
+  const handlePlay = async () => {
+    setPlaying(true)
+    // Count view once per video card mount
+    if (!viewCounted) {
+      setViewCounted(true)
+      try {
+        const res = await api.viewVideo(video.id)
+        setViews(res.views)
+      } catch (err) {
+        setViews(v => v + 1) // Optimistic fallback
+      }
+    }
+  }
+
   const handleDoubleClick = () => {
     if (!liked) {
       handleLike()
@@ -84,7 +100,7 @@ export default function VideoCard({ video }) {
             loop
             playsInline
             preload="metadata"
-            onPlay={() => setPlaying(true)}
+            onPlay={handlePlay}
             onPause={() => setPlaying(false)}
           />
           {!playing && (
@@ -114,7 +130,7 @@ export default function VideoCard({ video }) {
           </button>
           <button className="action-btn">
             <Eye size={22} />
-            <span>{formatCount(video.views || 0)}</span>
+            <span>{formatCount(views)}</span>
           </button>
           <button className="action-btn">
             <Bookmark size={22} />
